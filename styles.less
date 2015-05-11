@@ -1,0 +1,227 @@
+/*
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/4.0/.
+ */
+@import "lib/bootstrap-variables.less";
+
+@box-width: 45px;
+@box-height: 45px;
+@month-label-width: 30px;
+@year-label-width: 20px;
+@first-weekday: weekday0; // sunday first day of week
+//@first-weekday: weekday1; // monday first day of week
+
+@weekend-background: lightgrey;
+@year-label-background: grey;
+
+.draw-calendar(@weeks) {
+
+	.month-label() {
+		padding-left: @month-label-width;
+		margin-left: @year-label-width;
+		width: @month-label-width + @box-width;
+		.day-content {
+			left: @month-label-width;
+		}
+
+		&::before {
+			position: absolute;
+			left: 5px;
+			transform: rotate(-90deg) translate(-10px);
+		}
+
+		&.day1,	&.day2,	&.day3,	&.day4,	&.day5,	&.day6,	&.day7 {
+			.month-label-content();
+		}
+		&.day8,	&.day9,	&.day10, &.day11, &.day12, &.day13,	&.day14 {
+			& when (@weeks > 1) {
+				.month-label-content();
+			}
+		}
+		&.day15, &.day16,	&.day17, &.day18,	&.day19, &.day20, &.day21 {
+			& when (@weeks > 2) {
+				.month-label-content();
+			}
+		}
+	}
+
+	.year-label() {
+		&::after {
+			position: absolute;
+			left: -@year-label-width;
+			transform: translate(-20px) rotate(-90deg) translate(-18px);
+			padding: 2px 25px 1px 0px;
+			color: white;
+		}
+		&.month0::after {
+			border-right: 2px solid white;
+		}
+
+		&.day1,	&.day2,	&.day3,	&.day4,	&.day5,	&.day6,	&.day7 {
+			.year-label-content();
+		}
+		&.day8,	&.day9,	&.day10, &.day11, &.day12, &.day13,	&.day14 {
+			& when (@weeks > 1) {
+				.year-label-content();
+			}
+		}
+		&.day15, &.day16,	&.day17, &.day18,	&.day19, &.day20, &.day21 {
+			& when (@weeks > 2) {
+				.year-label-content();
+			}
+		}
+	}
+
+	.year-label-content() {
+		&::after {
+			content: attr(data-year);
+		}
+	}
+
+	.month-label-content() {
+		&.month0::before {
+			content: "Jan";
+		}
+		&.month1::before {
+			content: "Feb";
+		}
+		&.month2::before {
+			content: "Mar";
+		}
+		&.month3::before {
+			content: "Apr";
+		}
+		&.month4::before {
+			content: "May";
+		}
+		&.month5::before {
+			content: "Jun";
+		}
+		&.month6::before {
+			content: "Jul";
+		}
+		&.month7::before {
+			content: "Aug";
+		}
+		&.month8::before {
+			content: "Sep";
+		}
+		&.month9::before {
+			content: "Oct";
+		}
+		&.month10::before {
+			content: "Nov";
+		}
+		&.month11::before {
+			content: "Dec";
+		}
+	}
+	.border-top() {
+		border-top: 1px solid black;
+	}
+	.border-left() {
+		border-left: 1px solid black;
+	}
+
+	.calendar {
+		width: @weeks * 7 * @box-width + @month-label-width + @year-label-width;
+		height: 200%;
+		background: @year-label-background;
+
+		.day {
+			position: relative;
+			width: @box-width;
+			height: @box-height;
+			float: left;
+			background: white;
+
+			/* day content styling */
+			.day-content {
+				position: absolute;
+				top: 0px;
+				left: 0px;
+				width: @box-width;
+				height: @box-height;
+				text-align: center;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+
+				&:hover {
+					color: orange;
+					cursor: pointer;
+				}
+			}
+
+			/* month and year label */
+			&.@{first-weekday} when (@weeks = 1) {
+				.month-label();
+				&.month0,
+				&.month3,
+				&.month6,
+				&.month9 {
+					.year-label();
+				}
+			}
+			&.@{first-weekday}:nth-of-type(2n - 7) when (@weeks = 2) {
+				.month-label();
+				&.month0,
+				&.month6 {
+					.year-label();
+				}
+			}
+			&.@{first-weekday}:nth-of-type(3n - 14) when (@weeks = 3) {
+				.month-label();
+				&.month0,
+				&.month6 {
+					.year-label();
+				}
+			}
+
+			/* weekend background */
+			&.weekday6,
+			&.weekday0 {
+				& .day-content {
+					background: @weekend-background;
+				}
+			}
+
+			/* border lines */
+			&.day1:not(.@{first-weekday}) {
+				.border-left();
+			}
+			&.@{first-weekday}:nth-of-type(2n) when (@weeks = 2) {
+				&.day1 {
+					.border-left();
+				}
+			}
+			&.@{first-weekday}:nth-of-type(3n) when (@weeks = 3) {
+				&.day1 {
+					.border-left();
+				}
+			}
+			&.@{first-weekday}:nth-of-type(3n - 7) when (@weeks = 3) {
+				&.day1 {
+					.border-left();
+				}
+			}
+
+			&.day1,	&.day2,	&.day3,	&.day4,	&.day5,	&.day6,	&.day7 {
+				.border-top();
+			}
+			&.day8,	&.day9,	&.day10, &.day11, &.day12, &.day13,	&.day14 {
+				& when (@weeks > 1) {
+					.border-top();
+				}
+			}
+			&.day15, &.day16,	&.day17, &.day18,	&.day19, &.day20, &.day21 {
+				& when (@weeks > 2) {
+					.border-top();
+				}
+			}
+		}
+	}
+}
+
+@media (max-width: @screen-xs-max) { .draw-calendar(1) }
+@media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) { .draw-calendar(2) }
+@media (min-width: @screen-md-min) { .draw-calendar(3) }
